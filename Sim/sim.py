@@ -14,6 +14,9 @@ class TimedEvent:
         self.time = time
         self.event = event
 
+    def __repr__(self):
+        return "{0}: {1}".format(self.time, self.event)
+
 class EventQueue:
     def __init__(self):
         self.queue = []
@@ -22,7 +25,11 @@ class EventQueue:
         if len(self.queue) == 0:
             self.queue.append( evt )
         else:
-            head, *tail = find_indices(self.queue, lambda t : t.time < evt.time)
+            indices = find_indices(self.queue, lambda t : t.time < evt.time)
+            if len(indices) > 0:
+                self.queue.insert(indices[0]+1, evt)
+            else:
+                self.queue.insert(0, evt)
 
     def next(self):
         return self.queue[0]

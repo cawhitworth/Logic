@@ -20,6 +20,13 @@ class Tests(unittest.TestCase):
         queue.insertAt(e2)
         self.assertEqual(queue.next(), e1)
 
+    def testNonSequentialInserts(self):
+        queue = sim.EventQueue()
+        e1 = sim.TimedEvent(0, "Hello")
+        e2 = sim.TimedEvent(1, "Goodbye")
+        queue.insertAt(e2)
+        queue.insertAt(e1)
+        self.assertEqual(queue.next(), e1)
 
 if __name__ == "__main__":
     unittest.main()
