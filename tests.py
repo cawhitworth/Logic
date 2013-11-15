@@ -64,6 +64,34 @@ class LogicTests(unittest.TestCase):
 
         self.assertEqual(outputs, [components.LOW] * 3)
 
+    def testOrOfTwoLowsGivesLow(self):
+        inputA = components.Wire()
+        inputB = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        ander = components.OR(inputA, inputB, outputWire, queue)
+        inputA.setState(components.LOW)
+        inputB.setState(components.LOW)
+        self.assertEqual(outputWire.state, components.LOW)
+
+    def testOrOfAnythingElseGivesHigh(self):
+        inputA = components.Wire()
+        inputB = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        ander = components.OR(inputA, inputB, outputWire, queue)
+        outputs = []
+        inputA.setState(components.LOW)
+        inputB.setState(components.HIGH)
+        outputs.append(outputWire.state)
+
+        inputA.setState(components.HIGH)
+        outputs.append(outputWire.state)
+
+        inputB.setState(components.LOW)
+        outputs.append(outputWire.state)
+
+        self.assertEqual(outputs, [components.HIGH] * 3)
 
 class QueueTests(unittest.TestCase):
     def testEmptyQueueIsEmpty(self):
