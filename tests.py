@@ -1,7 +1,41 @@
 import Sim.sim as sim
+import Sim.components as components
 import unittest
 
-class Tests(unittest.TestCase):
+class LogicTests(unittest.TestCase):
+    class NotifyClient:
+        def __init__(self):
+            self.notified = False
+
+        def notify(self):
+            self.notified = True
+
+    class MockEventQueue:
+        def __init__(self):
+            pass
+
+        def now(self):
+            return 0
+
+        def insertAt(self, event):
+            event.event()
+
+    def testWireNotifiesOnStateChanges(self):
+        wire = components.Wire()
+        notifyClient = LogicTests.NotifyClient()
+        wire.connect(notifyClient)
+        wire.setState(components.HIGH)
+        self.assertEqual(notifyClient.notified, True)
+
+    def testInverterDoesAnInvert(self):
+        inputWire = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        inverter = components.Inverter(inputWire, outputWire, queue)
+        inputWire.setState(components.HIGH)
+        self.assertEqual(outputWire.state, components.LOW)
+
+class QueueTests(unittest.TestCase):
     def testEmptyQueueIsEmpty(self):
         queue = sim.EventQueue()
         self.assertEqual(len(queue.queue), 0)

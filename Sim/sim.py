@@ -1,11 +1,3 @@
-FLOATING = -1
-LOW = 0
-HIGH = 1
-
-class Wire:
-    def __init__(self):
-        self.state = FLOATING
-
 def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]
 
@@ -36,3 +28,4 @@ class EventQueue:
 
     def pop(self):
         return self.queue.pop(0)
+
