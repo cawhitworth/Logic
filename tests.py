@@ -31,7 +31,7 @@ class LogicTests(unittest.TestCase):
         inputWire = components.Wire()
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
-        inverter = components.Inverter(inputWire, outputWire, queue)
+        inverter = components.NOT(inputWire, outputWire, queue)
         inputWire.setState(components.HIGH)
         self.assertEqual(outputWire.state, components.LOW)
 
@@ -40,10 +40,29 @@ class LogicTests(unittest.TestCase):
         inputB = components.Wire()
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
-        ander = components.And(inputA, inputB, outputWire, queue)
+        ander = components.AND(inputA, inputB, outputWire, queue)
         inputA.setState(components.HIGH)
         inputB.setState(components.HIGH)
         self.assertEqual(outputWire.state, components.HIGH)
+
+    def testAndOfAnythingElseGivesLow(self):
+        inputA = components.Wire()
+        inputB = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        ander = components.AND(inputA, inputB, outputWire, queue)
+        outputs = []
+        inputA.setState(components.LOW)
+        inputB.setState(components.HIGH)
+        outputs.append(outputWire.state)
+
+        inputB.setState(components.LOW)
+        outputs.append(outputWire.state)
+
+        inputA.setState(components.HIGH)
+        outputs.append(outputWire.state)
+
+        self.assertEqual(outputs, [components.LOW] * 3)
 
 
 class QueueTests(unittest.TestCase):

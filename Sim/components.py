@@ -18,7 +18,7 @@ class Wire:
             for connection in self.connections:
                 connection.notify()
 
-class Inverter:
+class NOT:
     def __init__(self, inputWire, outputWire, eventQueue):
         self.outputWire = outputWire
         self.inputWire = inputWire
@@ -33,7 +33,7 @@ class Inverter:
 
         self.eventQueue.insertAt(event)
 
-class And:
+class AND:
     def __init__(self, inputWireA, inputWireB, outputWire, eventQueue):
         self.inputWireA = inputWireA
         self.inputWireB = inputWireB
