@@ -35,6 +35,17 @@ class LogicTests(unittest.TestCase):
         inputWire.setState(components.HIGH)
         self.assertEqual(outputWire.state, components.LOW)
 
+    def testAndOfTwoHighGivesHigh(self):
+        inputA = components.Wire()
+        inputB = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        ander = components.And(inputA, inputB, outputWire, queue)
+        inputA.setState(components.HIGH)
+        inputB.setState(components.HIGH)
+        self.assertEqual(outputWire.state, components.HIGH)
+
+
 class QueueTests(unittest.TestCase):
     def testEmptyQueueIsEmpty(self):
         queue = sim.EventQueue()

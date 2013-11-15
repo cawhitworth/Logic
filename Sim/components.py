@@ -33,5 +33,22 @@ class Inverter:
 
         self.eventQueue.insertAt(event)
 
+class And:
+    def __init__(self, inputWireA, inputWireB, outputWire, eventQueue):
+        self.inputWireA = inputWireA
+        self.inputWireB = inputWireB
+        self.outputWire = outputWire
+        self.eventQueue = eventQueue
+        inputWireA.connect(self)
+        inputWireB.connect(self)
 
+    def notify(self):
+        futureState = LOW
+        if self.inputWireA.state == HIGH and self.inputWireB.state == HIGH:
+           futureState = HIGH
+
+        event = Sim.sim.TimedEvent(self.eventQueue.now() + 1,
+            lambda : self.outputWire.setState(futureState))
+
+        self.eventQueue.insertAt(event)
 
