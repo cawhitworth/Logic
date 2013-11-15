@@ -33,3 +33,6 @@ class EventQueue:
 
     def next(self):
         return self.queue[0]
+
+    def pop(self):
+        return self.queue.pop(0)
