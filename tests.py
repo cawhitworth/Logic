@@ -138,6 +138,18 @@ class QueueTests(unittest.TestCase):
         self.assertEqual( (r1, r2, r3), (e1, e2, e3) )
 
 class SimulationTests(unittest.TestCase):
+    class Monitor:
+        def __init__(self, simulation):
+            self.wires = {}
+            self.alerts = []
+            self.simulation = simulation
+
+        def addWire(self, name, wire):
+            self.wires[wire] = name
+
+        def alert(self, wire, state):
+            self.alerts.append( (self.simulation.now(), wire, state) )
+
     def testSimulateInverter(self):
         eventQueue = sim.EventQueue()
         simulation = sim.Simulation(eventQueue)
@@ -150,12 +162,30 @@ class SimulationTests(unittest.TestCase):
         takeInputWireHigh = sim.TimedEvent(0,
             lambda : inputWire.setState(components.HIGH))
 
-        simulation.eventQueue.insertAt(takeInputWireHigh)
+        eventQueue.insertAt(takeInputWireHigh)
 
         simulation.runUntilComplete()
 
         self.assertEqual(outputWire.state, components.LOW)
 
+    def testSimulateInverterTime(self):
+        eventQueue = sim.EventQueue()
+        simulation = sim.Simulation(eventQueue)
+        monitor = SimulationTests.Monitor(simulation)
+
+        inputWire = components.Wire(monitor)
+        outputWire = components.Wire(monitor)
+
+        inverter = components.NOT(inputWire, outputWire, eventQueue, simulation)
+
+        takeInputWireHigh = sim.TimedEvent(0,
+            lambda : inputWire.setState(components.HIGH))
+
+        eventQueue.insertAt(takeInputWireHigh)
+
+        simulation.runUntilComplete()
+
+        self.assertEqual(monitor.alerts[1], (1, outputWire, components.LOW))
 
 if __name__ == "__main__":
     unittest.main()

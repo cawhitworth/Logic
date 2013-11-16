@@ -5,15 +5,18 @@ LOW = 0
 HIGH = 1
 
 class Wire:
-    def __init__(self):
+    def __init__(self, monitor = None):
         self.state = FLOATING
         self.connections = []
+        self.monitor = monitor
 
     def connect(self, component):
         self.connections.append(component)
 
     def setState(self, state):
         if self.state != state:
+            if self.monitor is not None:
+                self.monitor.alert(self, state)
             self.state = state
             for connection in self.connections:
                 connection.notify()
