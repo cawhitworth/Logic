@@ -99,6 +99,42 @@ class LogicTests(unittest.TestCase):
 
         self.assertEqual(outputs, [components.HIGH] * 3)
 
+    def testXorOneWireHighGivesHigh(self):
+        inputA = components.Wire()
+        inputB = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        sim = LogicTests.MockSimulation()
+        orer = components.XOR(inputA, inputB, outputWire, queue, sim)
+        outputs = []
+        inputA.setState(components.LOW)
+        inputB.setState(components.HIGH)
+        outputs.append(outputWire.state)
+
+        inputA.setState(components.HIGH)
+        inputB.setState(components.LOW)
+        outputs.append(outputWire.state)
+
+        self.assertEqual(outputs, [components.HIGH] * 2)
+
+    def testXorTwoWiresHighOrLowGivesLow(self):
+        inputA = components.Wire()
+        inputB = components.Wire()
+        outputWire = components.Wire()
+        queue = LogicTests.MockEventQueue()
+        sim = LogicTests.MockSimulation()
+        orer = components.XOR(inputA, inputB, outputWire, queue, sim)
+        outputs = []
+        inputA.setState(components.LOW)
+        inputB.setState(components.LOW)
+        outputs.append(outputWire.state)
+
+        inputA.setState(components.HIGH)
+        inputB.setState(components.HIGH)
+        outputs.append(outputWire.state)
+
+        self.assertEqual(outputs, [components.LOW] * 2)
+
 class QueueTests(unittest.TestCase):
     def testEmptyQueueIsEmpty(self):
         queue = sim.EventQueue()

@@ -80,3 +80,26 @@ class OR:
             lambda : self.outputWire.setState(futureState))
 
         self.eventQueue.insertAt(event)
+
+class XOR:
+    def __init__(self, inputWireA, inputWireB, outputWire, eventQueue, simulation):
+        self.inputWireA = inputWireA
+        self.inputWireB = inputWireB
+        self.outputWire = outputWire
+        self.eventQueue = eventQueue
+        self.simulation = simulation
+        inputWireA.connect(self)
+        inputWireB.connect(self)
+
+    def notify(self):
+        futureState = FLOATING
+        if ((self.inputWireA.state == HIGH and self.inputWireB.state == LOW) or
+            (self.inputWireB.state == HIGH and self.inputWireA.state == LOW)):
+           futureState = HIGH
+        else:
+           futureState = LOW
+
+        event = Sim.sim.TimedEvent(self.simulation.now() + 1,
+            lambda : self.outputWire.setState(futureState))
+
+        self.eventQueue.insertAt(event)

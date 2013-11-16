@@ -19,9 +19,9 @@ class EventQueue:
         else:
             indices = find_indices(self.queue, lambda t : t.time < evt.time)
             if len(indices) > 0:
-                self.queue.insert(indices[0]+1, evt)
+                self.queue.insert(indices[-1]+1, evt)
             else:
-                self.queue.insert(0, evt)
+                self.queue.insert(len(self.queue)+1, evt)
 
     def next(self):
         return self.queue[0]
