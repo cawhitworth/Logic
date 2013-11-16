@@ -29,3 +29,19 @@ class EventQueue:
     def pop(self):
         return self.queue.pop(0)
 
+    def len(self):
+        return len(self.queue)
+
+class Simulation:
+    def __init__(self, eventQueue):
+        self.eventQueue = eventQueue
+        self.t = 0
+
+    def runUntilComplete(self):
+        while self.eventQueue.len() > 0:
+            evt = self.eventQueue.pop()
+            self.t = evt.time
+            evt.event()
+
+    def now(self):
+        return self.t
