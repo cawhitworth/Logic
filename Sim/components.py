@@ -10,56 +10,49 @@ class Wire:
     def __init__(self, name = "", monitor = None):
         self.state = FLOATING
         self.connections = []
-        self.monitor = monitor
         Wire.instance += 1
         if name == "":
             name = "Wire{0}".format(Wire.instance)
         self.name = name
         if monitor != None:
-            monitor.addWire(self)
+            self.connections.append(monitor)
 
     def connect(self, component):
         self.connections.append(component)
 
     def setState(self, state):
         if self.state != state:
-            if self.monitor is not None:
-                self.monitor.alert(self, state)
             self.state = state
             for connection in self.connections:
-                connection.notify()
+                connection.notify(self)
 
 class NOT:
-    def __init__(self, inputWire, outputWire, eventQueue, simulation):
+    def __init__(self, inputWire, outputWire, simulation):
         self.outputWire = outputWire
         self.inputWire = inputWire
-        self.eventQueue = eventQueue
         self.simulation = simulation
         inputWire.connect(self)
 
-    def notify(self):
+    def notify(self, wire):
         futureState = FLOATING
         if self.inputWire.state == HIGH:
             futureState = LOW
         if self.inputWire.state == LOW:
             futureState = HIGH
 
-        event = Sim.sim.TimedEvent(self.simulation.now() + 1,
-            lambda : self.outputWire.setState(futureState))
-
-        self.eventQueue.insertAt(event)
+        action = lambda : self.outputWire.setState(futureState)
+        self.simulation.addActionAfter(action, 1)
 
 class AND:
-    def __init__(self, inputWireA, inputWireB, outputWire, eventQueue, simulation):
+    def __init__(self, inputWireA, inputWireB, outputWire, simulation):
         self.inputWireA = inputWireA
         self.inputWireB = inputWireB
         self.outputWire = outputWire
-        self.eventQueue = eventQueue
         self.simulation = simulation
         inputWireA.connect(self)
         inputWireB.connect(self)
 
-    def notify(self):
+    def notify(self, wire):
         futureState = FLOATING
         if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
             if self.inputWireA.state == HIGH and self.inputWireB.state == HIGH:
@@ -67,22 +60,19 @@ class AND:
             else:
                futureState = LOW
 
-        event = Sim.sim.TimedEvent(self.simulation.now() + 1,
-            lambda : self.outputWire.setState(futureState))
-
-        self.eventQueue.insertAt(event)
+        action = lambda : self.outputWire.setState(futureState)
+        self.simulation.addActionAfter(action, 1)
 
 class OR:
-    def __init__(self, inputWireA, inputWireB, outputWire, eventQueue, simulation):
+    def __init__(self, inputWireA, inputWireB, outputWire, simulation):
         self.inputWireA = inputWireA
         self.inputWireB = inputWireB
         self.outputWire = outputWire
-        self.eventQueue = eventQueue
         self.simulation = simulation
         inputWireA.connect(self)
         inputWireB.connect(self)
 
-    def notify(self):
+    def notify(self, wire):
         futureState = FLOATING
         if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
             if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
@@ -91,22 +81,19 @@ class OR:
                 else:
                    futureState = LOW
 
-        event = Sim.sim.TimedEvent(self.simulation.now() + 1,
-            lambda : self.outputWire.setState(futureState))
-
-        self.eventQueue.insertAt(event)
+        action = lambda : self.outputWire.setState(futureState)
+        self.simulation.addActionAfter(action, 1)
 
 class XOR:
-    def __init__(self, inputWireA, inputWireB, outputWire, eventQueue, simulation):
+    def __init__(self, inputWireA, inputWireB, outputWire, simulation):
         self.inputWireA = inputWireA
         self.inputWireB = inputWireB
         self.outputWire = outputWire
-        self.eventQueue = eventQueue
         self.simulation = simulation
         inputWireA.connect(self)
         inputWireB.connect(self)
 
-    def notify(self):
+    def notify(self, wire):
         futureState = FLOATING
         if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
             if ((self.inputWireA.state == HIGH and self.inputWireB.state == LOW) or
@@ -115,7 +102,5 @@ class XOR:
             else:
                futureState = LOW
 
-        event = Sim.sim.TimedEvent(self.simulation.now() + 1,
-            lambda : self.outputWire.setState(futureState))
-
-        self.eventQueue.insertAt(event)
+        action = lambda : self.outputWire.setState(futureState)
+        self.simulation.addActionAfter(action, 1)

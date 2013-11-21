@@ -3,19 +3,19 @@ import Sim.components as comp
 from Sim.monitor import LoggingMonitor
 
 class HalfAdder:
-    def __init__(self, a, b, s, c, eventQueue, simulation):
-        self.sumCalc = comp.XOR(a, b, s, eventQueue, simulation)
-        self.carryCalc = comp.AND(a, b, c, eventQueue, simulation)
+    def __init__(self, a, b, s, c, simulation):
+        self.sumCalc = comp.XOR(a, b, s, simulation)
+        self.carryCalc = comp.AND(a, b, c, simulation)
 
 class FullAdder:
-    def __init__(self, a, b, cIn, s, cOut, eventQueue, simulation, monitor):
+    def __init__(self, a, b, cIn, s, cOut, simulation, monitor):
         ha1Sum = comp.Wire("", monitor)
         ha1Carry = comp.Wire("", monitor)
         ha2Carry = comp.Wire("", monitor)
 
-        self.ha1 = HalfAdder(a, b, ha1Sum, ha1Carry, eventQueue, simulation)
-        self.ha2 = HalfAdder(cIn, ha1Sum, s, ha2Carry, eventQueue, simulation)
-        self.carry = comp.OR(ha1Carry, ha2Carry, cOut, eventQueue, simulation)
+        self.ha1 = HalfAdder(a, b, ha1Sum, ha1Carry, simulation)
+        self.ha2 = HalfAdder(cIn, ha1Sum, s, ha2Carry, simulation)
+        self.carry = comp.OR(ha1Carry, ha2Carry, cOut, simulation)
 
 eq = s.EventQueue()
 sim = s.Simulation(eq)
@@ -27,7 +27,7 @@ cIn = comp.Wire("cIn",monitor)
 s = comp.Wire("sum",monitor)
 cOut = comp.Wire("cOut",monitor)
 
-fullAdder = FullAdder(a, b, cIn, s, cOut, eq, sim, monitor)
+fullAdder = FullAdder(a, b, cIn, s, cOut, sim, monitor)
 
 a.setState(comp.LOW)
 b.setState(comp.LOW)

@@ -7,7 +7,7 @@ class LogicTests(unittest.TestCase):
         def __init__(self):
             self.notified = False
 
-        def notify(self):
+        def notify(self, wire):
             self.notified = True
 
     class MockEventQueue:
@@ -21,6 +21,9 @@ class LogicTests(unittest.TestCase):
         def now(self):
             return 0
 
+        def addActionAfter(self,action, delay):
+            action()
+
     def testWireNotifiesOnStateChanges(self):
         wire = components.Wire()
         notifyClient = LogicTests.NotifyClient()
@@ -33,7 +36,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        inverter = components.NOT(inputWire, outputWire, queue, sim)
+        inverter = components.NOT(inputWire, outputWire, sim)
         inputWire.setState(components.HIGH)
         self.assertEqual(outputWire.state, components.LOW)
 
@@ -43,7 +46,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        ander = components.AND(inputA, inputB, outputWire, queue,sim)
+        ander = components.AND(inputA, inputB, outputWire, sim)
         inputA.setState(components.HIGH)
         inputB.setState(components.HIGH)
         self.assertEqual(outputWire.state, components.HIGH)
@@ -54,7 +57,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        ander = components.AND(inputA, inputB, outputWire, queue, sim)
+        ander = components.AND(inputA, inputB, outputWire, sim)
         outputs = []
         inputA.setState(components.LOW)
         inputB.setState(components.HIGH)
@@ -74,7 +77,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        orer = components.OR(inputA, inputB, outputWire, queue, sim)
+        orer = components.OR(inputA, inputB, outputWire, sim)
         inputA.setState(components.LOW)
         inputB.setState(components.LOW)
         self.assertEqual(outputWire.state, components.LOW)
@@ -85,7 +88,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        orer = components.OR(inputA, inputB, outputWire, queue, sim)
+        orer = components.OR(inputA, inputB, outputWire, sim)
         outputs = []
         inputA.setState(components.LOW)
         inputB.setState(components.HIGH)
@@ -105,7 +108,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        orer = components.XOR(inputA, inputB, outputWire, queue, sim)
+        orer = components.XOR(inputA, inputB, outputWire, sim)
         outputs = []
         inputA.setState(components.LOW)
         inputB.setState(components.HIGH)
@@ -123,7 +126,7 @@ class LogicTests(unittest.TestCase):
         outputWire = components.Wire()
         queue = LogicTests.MockEventQueue()
         sim = LogicTests.MockSimulation()
-        orer = components.XOR(inputA, inputB, outputWire, queue, sim)
+        orer = components.XOR(inputA, inputB, outputWire, sim)
         outputs = []
         inputA.setState(components.LOW)
         inputB.setState(components.LOW)
@@ -176,15 +179,14 @@ class QueueTests(unittest.TestCase):
 class SimulationTests(unittest.TestCase):
     class Monitor:
         def __init__(self, simulation):
-            self.wires = {}
             self.alerts = []
             self.simulation = simulation
 
-        def addWire(self, name, wire):
-            self.wires[wire] = name
+        def addWire(self, name):
+            pass
 
-        def alert(self, wire, state):
-            self.alerts.append( (self.simulation.now(), wire, state) )
+        def notify(self, wire):
+            self.alerts.append( (self.simulation.now(), wire, wire.state) )
 
     def testSimulateInverter(self):
         eventQueue = sim.EventQueue()
@@ -193,7 +195,7 @@ class SimulationTests(unittest.TestCase):
         inputWire = components.Wire()
         outputWire = components.Wire()
 
-        inverter = components.NOT(inputWire, outputWire, eventQueue, simulation)
+        inverter = components.NOT(inputWire, outputWire, simulation)
 
         takeInputWireHigh = sim.TimedEvent(0,
             lambda : inputWire.setState(components.HIGH))
@@ -209,15 +211,12 @@ class SimulationTests(unittest.TestCase):
         simulation = sim.Simulation(eventQueue)
         monitor = SimulationTests.Monitor(simulation)
 
-        inputWire = components.Wire(monitor)
-        outputWire = components.Wire(monitor)
+        inputWire = components.Wire("",monitor)
+        outputWire = components.Wire("",monitor)
 
-        inverter = components.NOT(inputWire, outputWire, eventQueue, simulation)
+        inverter = components.NOT(inputWire, outputWire, simulation)
 
-        takeInputWireHigh = sim.TimedEvent(0,
-            lambda : inputWire.setState(components.HIGH))
-
-        eventQueue.insertAt(takeInputWireHigh)
+        simulation.addActionAfter(lambda : inputWire.setState(components.HIGH), 0)
 
         simulation.runUntilComplete()
 

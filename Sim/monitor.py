@@ -7,8 +7,8 @@ class LoggingMonitor:
     def addWire(self, wire):
         self.wires.append(wire.name)
 
-    def alert(self, wire, state):
-        self.alerts.append( (self.simulation.now(), wire, state) )
+    def notify(self, wire):
+        self.alerts.append( (self.simulation.now(), wire, wire.state) )
 
     def reset(self):
         self.alerts = []

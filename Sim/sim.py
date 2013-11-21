@@ -20,7 +20,6 @@ class EventQueue:
             indices = find_indices(self.queue, lambda t : evt.time < t.time)
             if len(indices) > 0:
                 self.queue.insert(indices[0], evt)
-#                self.queue.insert(indices[-1]+1, evt)
             else:
                 self.queue.insert(len(self.queue)+1, evt)
 
@@ -43,6 +42,10 @@ class Simulation:
             evt = self.eventQueue.pop()
             self.t = evt.time
             evt.event()
+
+    def addActionAfter(self, action, delay):
+        evt = TimedEvent(self.now()+delay, action)
+        self.eventQueue.insertAt(evt)
 
     def now(self):
         return self.t
