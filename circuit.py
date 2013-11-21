@@ -1,21 +1,8 @@
 from Sim.sim import LOW, HIGH, EventQueue, Simulation, Wire
 import Sim.gates as gates
 from Sim.monitor import LoggingMonitor
+from Sim.components import FullAdder, HalfAdder
 
-class HalfAdder:
-    def __init__(self, a, b, s, c, simulation):
-        self.sumCalc = gates.XOR(a, b, s, simulation)
-        self.carryCalc = gates.AND(a, b, c, simulation)
-
-class FullAdder:
-    def __init__(self, a, b, cIn, s, cOut, simulation, monitor):
-        ha1Sum = Wire("", monitor)
-        ha1Carry = Wire("", monitor)
-        ha2Carry = Wire("", monitor)
-
-        self.ha1 = HalfAdder(a, b, ha1Sum, ha1Carry, simulation)
-        self.ha2 = HalfAdder(cIn, ha1Sum, s, ha2Carry, simulation)
-        self.carry = gates.OR(ha1Carry, ha2Carry, cOut, simulation)
 
 eq = EventQueue()
 sim = Simulation(eq)

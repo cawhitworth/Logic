@@ -19,10 +19,20 @@ class Clock:
             self.out.setState(LOW)
             self.simulation.addActionAfter(self.clock, self.tLow)
 
+class SR:
+    def __init__(self, S, R, Q, notQ, simulation, monitor=None):
+        internalWire1 = Wire("", monitor)
+        internalWire2 = Wire("", monitor)
+
+        or1 = OR(R, notQ, internalWire1, simulation)
+        not1 = NOT(internalWire1, Q, simulation)
+        or2 = OR(S, Q, internalWire2, simulation)
+        not2 = NOT(internalWire2, notQ, simulation)
+
 class HalfAdder:
     def __init__(self, a, b, s, c, simulation):
-        self.sumCalc = gates.XOR(a, b, s, simulation)
-        self.carryCalc = gates.AND(a, b, c, simulation)
+        self.sumCalc = XOR(a, b, s, simulation)
+        self.carryCalc = AND(a, b, c, simulation)
 
 class FullAdder:
     def __init__(self, a, b, cIn, s, cOut, simulation, monitor=None):
@@ -32,4 +42,4 @@ class FullAdder:
 
         self.ha1 = HalfAdder(a, b, ha1Sum, ha1Carry, simulation)
         self.ha2 = HalfAdder(cIn, ha1Sum, s, ha2Carry, simulation)
-        self.carry = gates.OR(ha1Carry, ha2Carry, cOut, simulation)
+        self.carry = OR(ha1Carry, ha2Carry, cOut, simulation)

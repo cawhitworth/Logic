@@ -13,7 +13,7 @@ class Wire:
             name = "Wire{0}".format(Wire.instance)
         self.name = name
         if monitor != None:
-            self.connections.append(monitor)
+            self.connect(monitor)
 
     def connect(self, component):
         self.connections.append(component)
@@ -29,21 +29,39 @@ def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]
 
 class TimedEvent:
-    def __init__(self, time, event):
+    def __init__(self, time, event, key = None):
         self.time = time
         self.event = event
+        self.key = key
 
     def __repr__(self):
-        return "{0}: {1}".format(self.time, self.event)
+        "{0}: {1} KEY {2}".format(self.time, self.event, self.key)
 
 class EventQueue:
     def __init__(self):
         self.queue = []
 
     def insertAt(self, evt):
+
+        # Zero length queue, just append it
         if len(self.queue) == 0:
             self.queue.append( evt )
         else:
+
+            # if this is a keyed item, look for another item with the same
+            # key at the same time and replace if necessary
+            if evt.key != None:
+                indices = find_indices(self.queue,
+                    lambda t : evt.time == t.time and evt.key == t.key)
+
+                if len(indices) > 0:
+                    if len(indices) != 1:
+                        raise "This shouldn't happen"
+                    self.queue[indices[0]] = evt
+                    return
+
+            # otherwise, just insert it before the first element
+            # with a greater time
             indices = find_indices(self.queue, lambda t : evt.time < t.time)
             if len(indices) > 0:
                 self.queue.insert(indices[0], evt)
@@ -68,13 +86,17 @@ class Simulation:
         while self.eventQueue.len() > 0:
             self.runStep()
 
+    def runUntil(self, time):
+        while self.eventQueue.len() > 0 and self.t < time:
+            self.runStep()
+
     def runStep(self):
         evt = self.eventQueue.pop()
         self.t = evt.time
         evt.event()
 
-    def addActionAfter(self, action, delay):
-        evt = TimedEvent(self.now()+delay, action)
+    def addActionAfter(self, action, delay, key=None):
+        evt = TimedEvent(self.now()+delay, action, key)
         self.eventQueue.insertAt(evt)
 
     def now(self):

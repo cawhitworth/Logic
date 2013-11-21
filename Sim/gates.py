@@ -15,7 +15,7 @@ class NOT:
             futureState = HIGH
 
         action = lambda : self.outputWire.setState(futureState)
-        self.simulation.addActionAfter(action, 1)
+        self.simulation.addActionAfter(action, 1, self.outputWire)
 
 class AND:
     def __init__(self, inputWireA, inputWireB, outputWire, simulation):
@@ -28,14 +28,13 @@ class AND:
 
     def notify(self, wire):
         futureState = FLOATING
-        if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
-            if self.inputWireA.state == HIGH and self.inputWireB.state == HIGH:
-               futureState = HIGH
-            else:
-               futureState = LOW
+        if self.inputWireA.state == HIGH and self.inputWireB.state == HIGH:
+           futureState = HIGH
+        else:
+           futureState = LOW
 
         action = lambda : self.outputWire.setState(futureState)
-        self.simulation.addActionAfter(action, 1)
+        self.simulation.addActionAfter(action, 1, self.outputWire)
 
 class OR:
     def __init__(self, inputWireA, inputWireB, outputWire, simulation):
@@ -48,15 +47,13 @@ class OR:
 
     def notify(self, wire):
         futureState = FLOATING
-        if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
-            if self.inputWireA.state != FLOATING and self.inputWireB.state != FLOATING:
-                if self.inputWireA.state == HIGH or self.inputWireB.state == HIGH:
-                   futureState = HIGH
-                else:
-                   futureState = LOW
+        if self.inputWireA.state == HIGH or self.inputWireB.state == HIGH:
+           futureState = HIGH
+        else:
+           futureState = LOW
 
         action = lambda : self.outputWire.setState(futureState)
-        self.simulation.addActionAfter(action, 1)
+        self.simulation.addActionAfter(action, 1, self.outputWire)
 
 class XOR:
     def __init__(self, inputWireA, inputWireB, outputWire, simulation):
@@ -77,4 +74,4 @@ class XOR:
                futureState = LOW
 
         action = lambda : self.outputWire.setState(futureState)
-        self.simulation.addActionAfter(action, 1)
+        self.simulation.addActionAfter(action, 1, self.outputWire)
