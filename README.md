@@ -18,14 +18,16 @@ Create a wire:
 
 ```
 from Sim.sim import Wire
-Wire("wireName", monitor)
+w = Wire("wireName", monitor)
+w.connect(component) # generally, wires are passed into components who
+                     # connect themselves, rather than doing this.
 ```
 
-Both parameters are optional. A name will be automatically generated if one
-is not supplied (or if the name is an empty string).
+Both constructor parameters are optional. A name will be automatically
+generated if one is not supplied (or if the name is an empty string).
 
-A `Wire` will `notify` any `connect`ed components and its `monitor` if one
-is supplied.
+A `Wire` will `notify` any `connect`ed components, passing itself in as the
+parameter, as well as its `monitor` if one is supplied.
 
 Use `monitor`s to watch circuit behaviour.
 
@@ -33,7 +35,7 @@ Use `monitor`s to watch circuit behaviour.
 
 All components have the general form:
 
-`component(inputWire1, inputWire2, ... , outputWire1, outputWire2, ..., [parameters], simulation)`
+`Component(inputWire1, inputWire2, ... , outputWire1, outputWire2, ..., [parameters], simulation)`
 
 ### Basic gates
 
