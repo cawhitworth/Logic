@@ -1,6 +1,6 @@
 import Sim.sim as sim
 import Sim.gates as gates
-import Sim.components as components
+import Sim.components.components as components
 import unittest
 
 class LogicTests(unittest.TestCase):
@@ -22,7 +22,7 @@ class LogicTests(unittest.TestCase):
         def now(self):
             return 0
 
-        def addActionAfter(self,action, delay):
+        def addActionAfter(self,action, delay, key=None):
             action()
 
     def testWireNotifiesOnStateChanges(self):

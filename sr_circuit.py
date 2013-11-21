@@ -1,7 +1,7 @@
 from Sim.sim import LOW, HIGH, EventQueue, Simulation, Wire
 import Sim.gates as gates
 from Sim.monitor import LiveMonitor
-from Sim.components import SR
+from Sim.components import latches
 
 eq = EventQueue()
 sim = Simulation(eq)
@@ -12,21 +12,21 @@ R = Wire("RESET", monitor)
 Q = Wire("Q", monitor)
 notQ = Wire("~Q", monitor)
 
-latch = SR(S, R, Q, notQ, sim)
+latch = latches.SR(S, R, Q, notQ, sim)
 
 S.setState(LOW)
 R.setState(HIGH)
 sim.runUntilComplete()
-print()
+print("")
 R.setState(LOW)
 sim.runUntilComplete()
-print()
+print("")
 S.setState(HIGH)
 sim.runUntilComplete()
-print()
+print("")
 S.setState(LOW)
 sim.runUntilComplete()
-print()
+print("")
 
 #sim.addActionAfter( lambda : S.setState(HIGH), 1 )
 #sim.addActionAfter( lambda : S.setState(LOW), 2 )

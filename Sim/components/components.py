@@ -19,16 +19,6 @@ class Clock:
             self.out.setState(LOW)
             self.simulation.addActionAfter(self.clock, self.tLow)
 
-class SR:
-    def __init__(self, S, R, Q, notQ, simulation, monitor=None):
-        internalWire1 = Wire("", monitor)
-        internalWire2 = Wire("", monitor)
-
-        or1 = OR(R, notQ, internalWire1, simulation)
-        not1 = NOT(internalWire1, Q, simulation)
-        or2 = OR(S, Q, internalWire2, simulation)
-        not2 = NOT(internalWire2, notQ, simulation)
-
 class HalfAdder:
     def __init__(self, a, b, s, c, simulation):
         self.sumCalc = XOR(a, b, s, simulation)

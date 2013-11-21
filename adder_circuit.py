@@ -1,8 +1,7 @@
 from Sim.sim import LOW, HIGH, EventQueue, Simulation, Wire
 import Sim.gates as gates
 from Sim.monitor import LoggingMonitor
-from Sim.components import FullAdder, HalfAdder
-
+from Sim.components.maths import FullAdder, HalfAdder
 
 eq = EventQueue()
 sim = Simulation(eq)
