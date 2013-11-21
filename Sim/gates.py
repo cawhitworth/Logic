@@ -1,30 +1,4 @@
-import Sim.sim
-
-FLOATING = -1
-LOW = 0
-HIGH = 1
-
-class Wire:
-    instance = 0
-
-    def __init__(self, name = "", monitor = None):
-        self.state = FLOATING
-        self.connections = []
-        Wire.instance += 1
-        if name == "":
-            name = "Wire{0}".format(Wire.instance)
-        self.name = name
-        if monitor != None:
-            self.connections.append(monitor)
-
-    def connect(self, component):
-        self.connections.append(component)
-
-    def setState(self, state):
-        if self.state != state:
-            self.state = state
-            for connection in self.connections:
-                connection.notify(self)
+from Sim.sim import FLOATING, LOW, HIGH
 
 class NOT:
     def __init__(self, inputWire, outputWire, simulation):

@@ -1,24 +1,24 @@
 import Sim.sim as s
-import Sim.components as comp
+import Sim.gates as gates
 from Sim.monitor import LoggingMonitor
 
 eq = s.EventQueue()
 sim = s.Simulation(eq)
 monitor = LoggingMonitor(sim)
 
-a = comp.Wire("a",monitor)
-b = comp.Wire("b",monitor)
-orOut = comp.Wire("orOut",monitor)
-notOut = comp.Wire("notOut",monitor)
-s = comp.Wire("s",monitor)
-carry = comp.Wire("carry",monitor)
+a = s.Wire("a",monitor)
+b = s.Wire("b",monitor)
+orOut = s.Wire("orOut",monitor)
+notOut = s.Wire("notOut",monitor)
+sOut = s.Wire("s",monitor)
+carry = s.Wire("carry",monitor)
 
-or1 = comp.OR(a, b, orOut, sim)
-and1 = comp.AND(a, b, carry, sim)
-inv1 = comp.NOT(carry, notOut, sim)
-and2 = comp.AND(orOut, notOut, s, sim)
+or1 = gates.OR(a, b, orOut, sim)
+and1 = gates.AND(a, b, carry, sim)
+inv1 = gates.NOT(carry, notOut, sim)
+and2 = gates.AND(orOut, notOut, sOut, sim)
 
-a.setState(comp.HIGH)
-b.setState(comp.HIGH)
+a.setState(gates.HIGH)
+b.setState(gates.HIGH)
 sim.runUntilComplete()
 monitor.log()

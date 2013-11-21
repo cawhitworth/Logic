@@ -1,3 +1,30 @@
+FLOATING = -1
+LOW = 0
+HIGH = 1
+
+class Wire:
+    instance = 0
+
+    def __init__(self, name = "", monitor = None):
+        self.state = FLOATING
+        self.connections = []
+        Wire.instance += 1
+        if name == "":
+            name = "Wire{0}".format(Wire.instance)
+        self.name = name
+        if monitor != None:
+            self.connections.append(monitor)
+
+    def connect(self, component):
+        self.connections.append(component)
+
+    def setState(self, state):
+        if self.state != state:
+            self.state = state
+            for connection in self.connections:
+                connection.notify(self)
+
+
 def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]
 
