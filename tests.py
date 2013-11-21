@@ -1,5 +1,6 @@
 import Sim.sim as sim
 import Sim.gates as gates
+import Sim.components as components
 import unittest
 
 class LogicTests(unittest.TestCase):
@@ -28,7 +29,7 @@ class LogicTests(unittest.TestCase):
         wire = sim.Wire()
         notifyClient = LogicTests.NotifyClient()
         wire.connect(notifyClient)
-        wire.setState(gates.HIGH)
+        wire.setState(sim.HIGH)
         self.assertEqual(notifyClient.notified, True)
 
     def testInverterDoesAnInvert(self):
@@ -37,8 +38,8 @@ class LogicTests(unittest.TestCase):
         queue = LogicTests.MockEventQueue()
         simulator = LogicTests.MockSimulation()
         inverter = gates.NOT(inputWire, outputWire, simulator)
-        inputWire.setState(gates.HIGH)
-        self.assertEqual(outputWire.state, gates.LOW)
+        inputWire.setState(sim.HIGH)
+        self.assertEqual(outputWire.state, sim.LOW)
 
     def testAndOfTwoHighGivesHigh(self):
         inputA = sim.Wire()
@@ -47,9 +48,9 @@ class LogicTests(unittest.TestCase):
         queue = LogicTests.MockEventQueue()
         simulator = LogicTests.MockSimulation()
         ander = gates.AND(inputA, inputB, outputWire, simulator)
-        inputA.setState(gates.HIGH)
-        inputB.setState(gates.HIGH)
-        self.assertEqual(outputWire.state, gates.HIGH)
+        inputA.setState(sim.HIGH)
+        inputB.setState(sim.HIGH)
+        self.assertEqual(outputWire.state, sim.HIGH)
 
     def testAndOfAnythingElseGivesLow(self):
         inputA = sim.Wire()
@@ -59,17 +60,17 @@ class LogicTests(unittest.TestCase):
         simulator = LogicTests.MockSimulation()
         ander = gates.AND(inputA, inputB, outputWire, simulator)
         outputs = []
-        inputA.setState(gates.LOW)
-        inputB.setState(gates.HIGH)
+        inputA.setState(sim.LOW)
+        inputB.setState(sim.HIGH)
         outputs.append(outputWire.state)
 
-        inputB.setState(gates.LOW)
+        inputB.setState(sim.LOW)
         outputs.append(outputWire.state)
 
-        inputA.setState(gates.HIGH)
+        inputA.setState(sim.HIGH)
         outputs.append(outputWire.state)
 
-        self.assertEqual(outputs, [gates.LOW] * 3)
+        self.assertEqual(outputs, [sim.LOW] * 3)
 
     def testOrOfTwoLowsGivesLow(self):
         inputA = sim.Wire()
@@ -78,9 +79,9 @@ class LogicTests(unittest.TestCase):
         queue = LogicTests.MockEventQueue()
         simulator = LogicTests.MockSimulation()
         orer = gates.OR(inputA, inputB, outputWire, simulator)
-        inputA.setState(gates.LOW)
-        inputB.setState(gates.LOW)
-        self.assertEqual(outputWire.state, gates.LOW)
+        inputA.setState(sim.LOW)
+        inputB.setState(sim.LOW)
+        self.assertEqual(outputWire.state, sim.LOW)
 
     def testOrOfAnythingElseGivesHigh(self):
         inputA = sim.Wire()
@@ -90,17 +91,17 @@ class LogicTests(unittest.TestCase):
         simulator = LogicTests.MockSimulation()
         orer = gates.OR(inputA, inputB, outputWire, simulator)
         outputs = []
-        inputA.setState(gates.LOW)
-        inputB.setState(gates.HIGH)
+        inputA.setState(sim.LOW)
+        inputB.setState(sim.HIGH)
         outputs.append(outputWire.state)
 
-        inputA.setState(gates.HIGH)
+        inputA.setState(sim.HIGH)
         outputs.append(outputWire.state)
 
-        inputB.setState(gates.LOW)
+        inputB.setState(sim.LOW)
         outputs.append(outputWire.state)
 
-        self.assertEqual(outputs, [gates.HIGH] * 3)
+        self.assertEqual(outputs, [sim.HIGH] * 3)
 
     def testXorOneWireHighGivesHigh(self):
         inputA = sim.Wire()
@@ -110,15 +111,15 @@ class LogicTests(unittest.TestCase):
         simulator = LogicTests.MockSimulation()
         orer = gates.XOR(inputA, inputB, outputWire, simulator)
         outputs = []
-        inputA.setState(gates.LOW)
-        inputB.setState(gates.HIGH)
+        inputA.setState(sim.LOW)
+        inputB.setState(sim.HIGH)
         outputs.append(outputWire.state)
 
-        inputA.setState(gates.HIGH)
-        inputB.setState(gates.LOW)
+        inputA.setState(sim.HIGH)
+        inputB.setState(sim.LOW)
         outputs.append(outputWire.state)
 
-        self.assertEqual(outputs, [gates.HIGH] * 2)
+        self.assertEqual(outputs, [sim.HIGH] * 2)
 
     def testXorTwoWiresHighOrLowGivesLow(self):
         inputA = sim.Wire()
@@ -128,15 +129,15 @@ class LogicTests(unittest.TestCase):
         simulator = LogicTests.MockSimulation()
         orer = gates.XOR(inputA, inputB, outputWire, simulator)
         outputs = []
-        inputA.setState(gates.LOW)
-        inputB.setState(gates.LOW)
+        inputA.setState(sim.LOW)
+        inputB.setState(sim.LOW)
         outputs.append(outputWire.state)
 
-        inputA.setState(gates.HIGH)
-        inputB.setState(gates.HIGH)
+        inputA.setState(sim.HIGH)
+        inputB.setState(sim.HIGH)
         outputs.append(outputWire.state)
 
-        self.assertEqual(outputs, [gates.LOW] * 2)
+        self.assertEqual(outputs, [sim.LOW] * 2)
 
 class QueueTests(unittest.TestCase):
     def testEmptyQueueIsEmpty(self):
@@ -198,13 +199,13 @@ class SimulationTests(unittest.TestCase):
         inverter = gates.NOT(inputWire, outputWire, simulation)
 
         takeInputWireHigh = sim.TimedEvent(0,
-            lambda : inputWire.setState(gates.HIGH))
+            lambda : inputWire.setState(sim.HIGH))
 
         eventQueue.insertAt(takeInputWireHigh)
 
         simulation.runUntilComplete()
 
-        self.assertEqual(outputWire.state, gates.LOW)
+        self.assertEqual(outputWire.state, sim.LOW)
 
     def testSimulateInverterTime(self):
         eventQueue = sim.EventQueue()
@@ -216,11 +217,31 @@ class SimulationTests(unittest.TestCase):
 
         inverter = gates.NOT(inputWire, outputWire, simulation)
 
-        simulation.addActionAfter(lambda : inputWire.setState(gates.HIGH), 0)
+        simulation.addActionAfter(lambda : inputWire.setState(sim.HIGH), 0)
 
         simulation.runUntilComplete()
 
-        self.assertEqual(monitor.alerts[1], (1, outputWire, gates.LOW))
+        self.assertEqual(monitor.alerts[1], (1, outputWire, sim.LOW))
+
+class ComponentTests(unittest.TestCase):
+    def testClock(self):
+        eq = sim.EventQueue()
+        s = sim.Simulation(eq)
+        monitor = SimulationTests.Monitor(s)
+
+        wire = sim.Wire("", monitor)
+
+        clk = components.Clock(wire, 50, 50, s)
+
+        s.runStep()
+        s.runStep()
+        s.runStep()
+
+        self.assertEqual(monitor.alerts[1:],
+            [ (50, wire, sim.HIGH),
+              (100, wire, sim.LOW) ] )
+
+
 
 if __name__ == "__main__":
     unittest.main()

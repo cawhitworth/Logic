@@ -66,9 +66,12 @@ class Simulation:
 
     def runUntilComplete(self):
         while self.eventQueue.len() > 0:
-            evt = self.eventQueue.pop()
-            self.t = evt.time
-            evt.event()
+            self.runStep()
+
+    def runStep(self):
+        evt = self.eventQueue.pop()
+        self.t = evt.time
+        evt.event()
 
     def addActionAfter(self, action, delay):
         evt = TimedEvent(self.now()+delay, action)
