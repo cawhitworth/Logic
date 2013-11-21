@@ -17,9 +17,10 @@ class EventQueue:
         if len(self.queue) == 0:
             self.queue.append( evt )
         else:
-            indices = find_indices(self.queue, lambda t : t.time < evt.time)
+            indices = find_indices(self.queue, lambda t : evt.time < t.time)
             if len(indices) > 0:
-                self.queue.insert(indices[-1]+1, evt)
+                self.queue.insert(indices[0], evt)
+#                self.queue.insert(indices[-1]+1, evt)
             else:
                 self.queue.insert(len(self.queue)+1, evt)
 
