@@ -27,6 +27,26 @@ class Wire:
     def __repr__(self):
         return self.name
 
+class Bus:
+    def __init__(self, width, name="", monitor=None):
+        self.wires = [ Wire("{0}{1}".format(name, n), monitor) for n in range(width) ]
+
+    def __len__(self):
+        return len(self.wires)
+
+    def __iter__(self):
+        return self.wires.__iter__()
+
+    def __next__(self):
+        return self.wires.__next__()
+
+    def __getitem__(self, key):
+        return self.wires[key]
+    def __setitem__(self, key):
+        raise TypeError("Cannot reassign wires in a bus")
+    def __delitem__(self, key):
+        raise TypeError("Cannot delete wires from a bus")
+
 def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]
 
