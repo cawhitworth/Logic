@@ -21,10 +21,13 @@ s.addActionAfter(lambda : D.setState(HIGH), 125, D)
 s.addActionAfter(lambda : D.setState(LOW), 145, D)
 s.addActionAfter(lambda : D.setState(HIGH), 175, D)
 
+m.notifying = False
+
 # Everything will be invalid until falling clock edge - Q
 # will oscillate wildly
-s.runUntil(125)
-print("Q = {0}".format(Q.state))
+s.runUntil(90)
+m.notifying = True
 
+s.runUntil(125)
 s.runUntil(225) # Q will go high shortly after t = 200
-print("Q = {0}".format(Q.state))
+

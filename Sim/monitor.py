@@ -20,15 +20,56 @@ class LoggingMonitor:
 
 class LiveMonitor:
     def __init__(self, simulation):
-        self.wires = []
-        self.alerts = []
         self.simulation = simulation
+        self.notifying = True
 
     def addWire(self, wire):
         pass
 
     def notify(self, wire):
-        print("{0} : {1} -> {2}".format(self.simulation.now(), wire.name, wire.state))
+        if self.notifying:
+            print("{0} : {1} -> {2}".format(self.simulation.now(), wire.name, wire.state))
 
     def reset(self):
-        self.alerts = []
+        pass
+
+class CSVMonitor:
+    def __init__(self, simulation):
+        self.wires = []
+        self.alerts = {}
+        self.simulation = simulation
+        self.recording = True
+
+    def addWire(self, wire):
+        self.wires.append(wire.name)
+
+    def notify(self, wire):
+        if self.notifying:
+            now = self.simulation.now()
+            if wire.name not in self.wires:
+                self.wires.append(wire.name)
+            if now in self.alerts.keys():
+
+                self.alerts[now][wire.name] = wire.state
+            else:
+                self.alerts[now] = {}
+                self.alerts[now][wire.name] = wire.state
+
+    def write(self):
+        output = []
+        headers = ",".join( ['"{0}"'.format(w) for w in self.wires ] )
+        output.append( '"time",{0}'.format(headers))
+        for when in sorted(self.alerts.keys()):
+            l = []
+            alert = self.alerts[when]
+            for wire in self.wires:
+                wires = alert.keys()
+                if wire in wires:
+                    l.append('"{0}"'.format(alert[wire]))
+                else:
+                    l.append('""')
+            line = '"{0}",{1}'.format(when, ",".join(l))
+            output.append(line)
+
+        return "\n".join(output)
+
