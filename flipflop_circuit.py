@@ -10,7 +10,7 @@ m = LiveMonitor(s)
 D = Wire("D", m)
 CLK = Wire("CLK", m)
 Q = Wire("Q", m)
-notQ = Wire("~Q", m)
+notQ = Wire("~Q")
 
 clk = components.Clock(CLK, 50, 50, s)
 
