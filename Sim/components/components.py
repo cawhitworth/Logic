@@ -19,3 +19,15 @@ class Clock:
             self.out.setState(LOW)
             self.simulation.addActionAfter(self.clock, self.tLow)
 
+class Buffer:
+    def __init__(self, I, O, simulation):
+        I.connect(self)
+        self.O = O
+
+    def notify(self, wire):
+        futureState = wire.state
+        action = lambda : self.outputWire.setState(futureState)
+        self.simulation.addActionAfter(action, 1, self.O)
+
+
+
