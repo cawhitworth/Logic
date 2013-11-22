@@ -1,7 +1,7 @@
 import unittest
 from Sim.sim import Wire, Bus
 
-class WireTests(unittest.TestCase):
+class BusTests(unittest.TestCase):
     def testBusSize(self):
         b = Bus(2, "BUS")
         self.assertEqual(len(b), 2)
@@ -27,3 +27,6 @@ class WireTests(unittest.TestCase):
             b[1] = Wire()
         self.assertRaises(TypeError, fn)
 
+    def testAnonymousBuses(self):
+        b = Bus(8)
+        self.assertEqual(b[1].name, "{0}1".format(b.name))

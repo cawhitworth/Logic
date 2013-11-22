@@ -28,8 +28,13 @@ class Wire:
         return self.name
 
 class Bus:
+    bus = 0
     def __init__(self, width, name="", monitor=None):
+        if name == "":
+            name = "BUS{0}_".format(Bus.bus)
+        self.name = name
         self.wires = [ Wire("{0}{1}".format(name, n), monitor) for n in range(width) ]
+        Bus.bus += 1
 
     def __len__(self):
         return len(self.wires)
