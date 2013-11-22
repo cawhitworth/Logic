@@ -41,7 +41,6 @@ class Bus:
 
     def __iter__(self):
         return self.wires.__iter__()
-
     def __next__(self):
         return self.wires.__next__()
 
@@ -51,6 +50,15 @@ class Bus:
         raise TypeError("Cannot reassign wires in a bus")
     def __delitem__(self, key):
         raise TypeError("Cannot delete wires from a bus")
+
+    def read(self):
+        value = 0
+        for index in range(len(self.wires)):
+            if self.wires[index].state == FLOATING:
+                return FLOATING
+            value += self.wires[index].state << index
+
+        return value
 
 def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]

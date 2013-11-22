@@ -1,5 +1,5 @@
 import unittest
-from Sim.sim import Wire, Bus
+from Sim.sim import Wire, Bus, HIGH, LOW, FLOATING
 
 class BusTests(unittest.TestCase):
     def testBusSize(self):
@@ -30,3 +30,22 @@ class BusTests(unittest.TestCase):
     def testAnonymousBuses(self):
         b = Bus(8)
         self.assertEqual(b[1].name, "{0}1".format(b.name))
+
+    def testBusReadFloating(self):
+        b = Bus(4)
+        self.assertEqual(b.read(), FLOATING)
+
+    def testBusRead(self):
+        b = Bus(4)
+        values = []
+        for w in b: w.setState(LOW)
+        values.append(b.read())
+        b[0].setState(HIGH)
+        values.append(b.read())
+        b[1].setState(HIGH)
+        values.append(b.read())
+        b[2].setState(HIGH)
+        values.append(b.read())
+        b[3].setState(HIGH)
+        values.append(b.read())
+        self.assertEqual(values, [ 0, 1, 3, 7, 15 ] )
