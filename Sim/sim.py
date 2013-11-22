@@ -24,6 +24,8 @@ class Wire:
             for connection in self.connections:
                 connection.notify(self)
 
+    def __repr__(self):
+        return self.name
 
 def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]
