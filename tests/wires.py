@@ -14,3 +14,16 @@ class WireTests(unittest.TestCase):
     def testBusIndexing(self):
         b = Bus(4, "BUS")
         self.assertEqual("BUS2", b[2].name)
+
+    def testDeletingFromBusFails(self):
+        b = Bus(4, "BUS")
+        def fn():
+            del(b[1])
+        self.assertRaises(TypeError, fn)
+
+    def testAssigningToBusFails(self):
+        b = Bus(4, "BUS")
+        def fn():
+            b[1] = Wire()
+        self.assertRaises(TypeError, fn)
+
