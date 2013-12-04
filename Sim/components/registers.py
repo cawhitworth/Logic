@@ -13,3 +13,14 @@ class R4_FET:
         ffs = [ flipflops.D_MS_FET(B_IN[i], CLK, B_OUT[i], B_OUTi[i], sim)
                 for i in range(4) ]
 
+class R_FET:
+    def __init__(self, B_IN, B_OUT, CLK, sim):
+        if len(B_IN) != len(B_OUT):
+            raise ValueError("Input bus must be same with as output")
+
+        width = len(B_IN)
+
+        B_OUTi = Bus(width)
+
+        ffs = [ flipflops.D_MS_FET(B_IN[i], CLK, B_OUT[i], B_OUTi[i], sim)
+                for i in range(width) ]
