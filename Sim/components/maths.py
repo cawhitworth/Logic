@@ -15,3 +15,23 @@ class FullAdder:
         self.ha1 = HalfAdder(a, b, ha1Sum, ha1Carry, simulation)
         self.ha2 = HalfAdder(cIn, ha1Sum, s, ha2Carry, simulation)
         self.carry = OR(ha1Carry, ha2Carry, cOut, simulation)
+
+class BusAdder:
+    def __init__(self, A, B, CIN, S, COUT, simulation, monitor = None):
+        if len(A) != len(B):
+            raise ValueError("Input buses must be of equal width")
+        if len(A) != len(S):
+            raise ValueError("Output bus must be same width as input")
+
+        width = len(A)
+
+        carryWire = CIN
+        carryOut = None
+        for i in range(width):
+            if i < width - 1:
+                carryOut = Wire("", monitor)
+            else:
+                carryOut = COUT
+            adder = FullAdder(A[i], B[i], carryWire, S[i], carryOut, simulation, monitor)
+            carryWire = carryOut
+

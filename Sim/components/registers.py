@@ -16,11 +16,23 @@ class R4_FET:
 class R_FET:
     def __init__(self, B_IN, B_OUT, CLK, sim):
         if len(B_IN) != len(B_OUT):
-            raise ValueError("Input bus must be same with as output")
+            raise ValueError("Input and output buses must be equal width")
 
         width = len(B_IN)
 
         B_OUTi = Bus(width)
 
         ffs = [ flipflops.D_MS_FET(B_IN[i], CLK, B_OUT[i], B_OUTi[i], sim)
+                for i in range(width) ]
+
+class R:
+    def __init__(self, B_IN, B_OUT, CLK, sim, LatchFactory = flipflops.D_MS_FET.Factory):
+        if len(B_IN) != len(B_OUT):
+            raise ValueError("Input and output buses must be equal width")
+
+        width = len(B_IN)
+
+        B_OUTi = Bus(width)
+
+        ffs = [ LatchFactory(B_IN[i], CLK, B_OUT[i], B_OUTi[i], sim)
                 for i in range(width) ]
