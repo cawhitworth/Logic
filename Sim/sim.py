@@ -60,6 +60,16 @@ class Bus:
 
         return value
 
+    def write(self, value):
+        if value < 0 or value > (1 << len(self.wires)):
+            raise ValueError("Value out of range")
+        for bit in range(len(self.wires)):
+            state = LOW
+            if (value & 1) == 1:
+                state = HIGH
+            self.wires[bit].setState(state)
+            value = value >> 1
+
 def find_indices(lst, condition):
     return [ i for (i, elem) in enumerate(lst) if condition(elem) ]
 
