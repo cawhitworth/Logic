@@ -24,13 +24,15 @@ class FastStable:
         self.Q = Q
         self.notQ = notQ
         self.sim = sim
+        self.oldState = CLK.state
 
     def notify(self, wire):
-        if wire.state == LOW:
+        if wire.state == LOW and self.oldState == HIGH:
             qAction = lambda : self.Q.setState(self.D.state)
             notQAction = lambda : self.notQ.setState(invert(self.D.state))
             self.sim.addActionAfter(qAction, 1, self.Q)
             self.sim.addActionAfter(notQAction, 1, self.notQ)
+        self.oldState = wire.state
 
     def Factory(D, CLK, Q, notQ, simulation, monitor = None):
         return FastStable(D, CLK, Q, notQ, simulation, monitor)
