@@ -4,6 +4,7 @@ from Sim.sim import Wire, HIGH, LOW, FLOATING, invert
 
 class D_MS_FET:
     def __init__(self, D, CLK, Q, notQ, simulation, monitor = None):
+        print("Honestly, you shouldn't use the D_MS_FET - it won't work like you expect")
         notCLK = Wire("", monitor)
         intQ = Wire("", monitor)
         intNotQ = Wire("", monitor)

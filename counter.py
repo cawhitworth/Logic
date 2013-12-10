@@ -10,11 +10,16 @@ eq = EventQueue()
 s = Simulation(eq)
 m = LiveMonitor(s)
 
+# Adder with output wired to input (using a buffer)
+# Second input hardwired to a value of 1
+# Input and output both buffered in registers
+# -> every second clock edge, ACC will increment by 1
+
 CLK = Wire("CLK")
 clk = components.Clock(CLK, 100, 100, s)
 
-ACC = Bus(8, "ACC",m)
-ONE = Bus(8, "ONE",m)
+ACC = Bus(8, "ACC")
+ONE = Bus(8, "ONE")
 R = Bus(8, "R")
 CIN = Bus(1,"CIN")
 COUT = Bus(1,"COUT")
@@ -41,5 +46,8 @@ CIN.write(0)
 ONE.write(1)
 ACC.write(0)
 
-s.runUntil(5000)
-print(ACC.read())
+t = 220
+while t < 5000:
+    s.runUntil(t)
+    print(ACC.read())
+    t += 400
