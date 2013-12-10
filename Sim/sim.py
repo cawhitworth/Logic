@@ -2,6 +2,13 @@ FLOATING = -1
 LOW = 0
 HIGH = 1
 
+def invert(state):
+    if state == FLOATING:
+        return FLOATING
+    if state == HIGH:
+        return LOW
+    return HIGH
+
 class Wire:
     instance = 0
 
