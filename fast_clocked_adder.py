@@ -70,3 +70,11 @@ print(S.read())
 s.runUntil(1250)
 
 print(S.read())
+
+CIN.setState(LOW)
+A.write(129)
+B.write(255)
+
+s.runUntil(1650)
+
+print(S.read())
