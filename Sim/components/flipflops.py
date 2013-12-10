@@ -16,6 +16,8 @@ class D_MS_FET:
     def Factory(D, CLK, Q, notQ, simulation, monitor = None):
         return D_MS_FET(D, CLK, Q, notQ, simulation, monitor)
 
+    Factory = staticmethod(Factory) # Fix for Python 2
+
 class FastStable:
     def __init__(self, D, CLK, Q, notQ, sim, monitor = None):
         Q.setState(FLOATING)
@@ -37,3 +39,5 @@ class FastStable:
 
     def Factory(D, CLK, Q, notQ, simulation, monitor = None):
         return FastStable(D, CLK, Q, notQ, simulation, monitor)
+
+    Factory = staticmethod(Factory) # Fix for Python 2
