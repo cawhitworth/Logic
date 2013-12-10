@@ -12,7 +12,7 @@ OUT = Bus(4, "OUT")
 CLK = Wire("CLK")
 clk = components.Clock(CLK, 50, 50, s)
 
-reg = registers.R_FET(IN, OUT, CLK, s)
+reg = registers.R(IN, OUT, CLK, s)
 
 for i in range(4):
     IN[i].setState(LOW)
